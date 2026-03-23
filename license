@@ -1,0 +1,10 @@
+***
+
+### How to add this to your GitHub:
+1. Go to your GitHub repository where you uploaded `bot.py`, `Dockerfile`, and `requirements.txt`.
+2. Click the **"Add file"** button -> **"Create new file"**.
+3. Name the file **`README.md`**.
+4. Paste the text above into the editor.
+5. Click **"Commit changes"** at the bottom.
+
+When people visit your GitHub page, this will be the beautiful front page they see!
