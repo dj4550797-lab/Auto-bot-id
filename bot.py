@@ -1,5 +1,9 @@
 import os
 import asyncio
+import time
+import psutil
+import platform
+from datetime import datetime
 from pyrogram import Client, filters, idle
 from pyrogram.types import BotCommand, InlineKeyboardMarkup, InlineKeyboardButton
 from aiohttp import web
@@ -11,10 +15,11 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 PORT = os.environ.get("PORT", "10000")
 
 app = Client("FlixoraIDBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+boot_time = time.time()
 
-# --- WEB SERVER (For Render) ---
+# --- WEB SERVER ---
 async def handle(request):
-    return web.Response(text="Flixora ID Finder is Alive!")
+    return web.Response(text="Flixora ID Bot is Online!")
 
 async def start_web_server():
     server = web.Application()
@@ -22,7 +27,7 @@ async def start_web_server():
     runner = web.AppRunner(server); await runner.setup()
     await web.TCPSite(runner, "0.0.0.0", int(PORT)).start()
 
-# --- START COMMAND (Stylish Format) ---
+# --- START COMMAND ---
 @app.on_message(filters.command("start") & filters.private)
 async def start(client, message):
     user_name = message.from_user.first_name
@@ -31,11 +36,11 @@ async def start(client, message):
 🎉 𝗪𝗘𝗟𝗖𝗢𝗠𝗘, —‌‌ {user_name} ! 🎉
 ━━━━━━━━━━━━━━━━━━━ 
 🟡 𝗪𝗛𝗔𝗧 𝗖𝗔𝗡 𝗜 𝗗𝗢 ❓
-┠ 📢 Channel ID
-┠ 👥 Group ID 
-┠ 🤖 Bot ID 
-┠ 👤 User ID 
-┗ ⭐ Premium User ID 
+┠ 📢 Channel ID -> `/id`
+┠ 👥 Group ID -> `/id`
+┠ 👤 User ID -> `/id`
+┠ 🎟 Sticker ID -> `/stickerid`
+┗ 🖥 System Info -> `/system`
 
 ━ Powered by @FlixoraUpdates 
 
@@ -45,43 +50,74 @@ async def start(client, message):
         [InlineKeyboardButton("➕ Add Flixora to Group", url=f"https://t.me/{client.me.username}?startgroup=true")],
         [InlineKeyboardButton("📢 Updates", url="https://t.me/FlixoraUpdates"), InlineKeyboardButton("🛠 Support", url="https://t.me/FlixoraSupport")]
     ])
-    
     await message.reply_text(welcome_text, reply_markup=btns)
 
-# --- ID COMMAND ---
+# --- ID COMMAND (User, Group, Channel, Unique) ---
 @app.on_message(filters.command("id"))
 async def id_finder(client, message):
     text = f"🔷 **𝗙𝗟𝗜𝗫𝗢𝗥𝗔 𝗜𝗗 𝗗𝗘𝗧𝗔𝗜𝗟𝗦** 🔶\n━━━━━━━━━━━━━━━━━\n"
     text += f"📌 **Chat ID:** `{message.chat.id}`\n"
     
     if message.from_user:
-        text += f"👤 **User ID:** `{message.from_user.id}`\n"
-        if message.from_user.is_premium:
-            text += f"⭐ **Account:** `Premium User`\n"
+        text += f"👤 **Your ID:** `{message.from_user.id}`\n"
+        text += f"🌟 **Premium:** `{'✅ Yes' if message.from_user.is_premium else '❌ No'}`\n"
     
     if message.reply_to_message:
-        if message.reply_to_message.from_user:
-            text += f"🎯 **Replied User:** `{message.reply_to_message.from_user.id}`\n"
-        if message.reply_to_message.forward_from_chat:
-            text += f"📢 **Channel ID:** `{message.reply_to_message.forward_from_chat.id}`\n"
+        reply = message.reply_to_message
+        if reply.from_user:
+            text += f"🎯 **Replied User ID:** `{reply.from_user.id}`\n"
+            text += f"⭐ **Replied Premium:** `{'✅ Yes' if reply.from_user.is_premium else '❌ No'}`\n"
+        
+        # Unique ID for Media
+        if reply.sticker:
+            text += f"🆔 **Unique ID:** `{reply.sticker.file_unique_id}`\n"
+        elif reply.document:
+            text += f"🆔 **File Unique ID:** `{reply.document.file_unique_id}`\n"
+        elif reply.video:
+            text += f"🆔 **Video Unique ID:** `{reply.video.file_unique_id}`\n"
             
     await message.reply_text(text, quote=True)
 
-# --- STICKER ID & PREVIEW FEATURE ---
-@app.on_message(filters.sticker | filters.text)
-async def sticker_logic(client, message):
-    # Agar user sticker bheje toh ID bataye
-    if message.sticker:
-        sticker_id = message.sticker.file_id
-        await message.reply_text(f"🎟 **Flixora Sticker ID:**\n`{sticker_id}`", quote=True)
+# --- STICKER ID COMMAND (Must Reply to Sticker) ---
+@app.on_message(filters.command(["stickerid", "stid"]))
+async def sticker_id_getter(client, message):
+    if message.reply_to_message and message.reply_to_message.sticker:
+        sticker = message.reply_to_message.sticker
+        text = f"""🎟 **𝗙𝗟𝗜𝗫𝗢𝗥𝗔 𝗦𝗧𝗜𝗖𝗞𝗘𝗥 𝗜𝗗**
+━━━━━━━━━━━━━━━━━
+📂 **File ID:** 
+`{sticker.file_id}`
+
+🆔 **Unique ID:** 
+`{sticker.file_unique_id}`"""
+        await message.reply_text(text, quote=True)
+    else:
+        await message.reply_text("⚠️ **Hero, kisi sticker ko reply karke `/stickerid` likho!**", quote=True)
+
+# --- SYSTEM COMMAND (Server Stats) ---
+@app.on_message(filters.command("system"))
+async def system_stats(client, message):
+    uptime = str(datetime.now() - datetime.fromtimestamp(boot_time)).split('.')[0]
+    cpu = psutil.cpu_percent()
+    ram = psutil.virtual_memory().percent
     
-    # Agar user Sticker ID likhe toh Sticker wapas bheje (Preview)
-    elif message.text and message.text.startswith("CAAC"):
+    sys_text = f"""🖥️ **𝗙𝗟𝗜𝗫𝗢𝗥𝗔 𝗦𝗬𝗦𝗧𝗘𝗠 𝗦𝗧𝗔𝗧𝗦**
+━━━━━━━━━━━━━━━━━
+🕒 **Uptime:** `{uptime}`
+⚙️ **CPU Usage:** `{cpu}%`
+💾 **RAM Usage:** `{ram}%`
+📡 **Status:** `Running Smooth 🚀`"""
+    await message.reply_text(sys_text, quote=True)
+
+# --- STICKER PREVIEW (Optional: If someone pastes CAAC ID) ---
+@app.on_message(filters.text & filters.private)
+async def preview_logic(client, message):
+    if message.text.startswith("CAAC"):
         try:
             await message.reply_sticker(sticker=message.text)
-            await message.reply_text("✨ **Above is the preview of your Sticker ID!**")
+            await message.reply_text("✨ **Sticker Preview Generated!**")
         except:
-            pass # Agar valid ID nahi hai toh ignore kare
+            pass
 
 # --- STARTUP ---
 async def main():
@@ -89,10 +125,11 @@ async def main():
     await app.start()
     await app.set_bot_commands([
         BotCommand("start", "Main Menu"),
-        BotCommand("id", "Get IDs"),
-        BotCommand("help", "Support")
+        BotCommand("id", "Get Chat/User IDs"),
+        BotCommand("stickerid", "Get Sticker Details"),
+        BotCommand("system", "Bot Server Status")
     ])
-    print("Flixora ID Bot is Running!")
+    print("Flixora Pro ID Bot is Ready!")
     await idle()
 
 if __name__ == "__main__":
