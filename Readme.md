@@ -1,14 +1,33 @@
-# 🔷 Flixora ID Finder Bot 🔶
+# 🔷 Flixora ID & System Finder 🔶
 
-A powerful and stylish Telegram bot to find Chat IDs, User IDs, and Sticker IDs instantly.
+The most stylish and powerful Telegram ID Finder bot with real-time server monitoring and unique ID detection.
 
 ## 🚀 Features
-- ⚡ **ID Finder:** Get ID of users, groups, and channels.
-- 🎟 **Sticker ID:** Send a sticker to get its ID.
-- 👁 **Sticker Preview:** Paste a Sticker ID and Flixora will show you the sticker.
-- 🎨 **Premium Styling:** Beautifully formatted responses.
-- 🐳 **Docker & Render Ready:** Includes built-in web server.
+- ⚡ **Instant IDs:** Get User, Group, Channel, and Bot IDs.
+- ⭐ **Premium Detection:** Check if a user is a Telegram Premium subscriber.
+- 🆔 **Unique IDs:** Extracts the hidden `file_unique_id` from stickers and files.
+- 🖥️ **System Monitor:** Use `/system` to see real-time CPU, RAM, and Server health.
+- 🎟️ **Sticker Tools:** Get Sticker IDs or preview any Sticker ID instantly.
+- 🐳 **Docker & Render Ready:** Includes automated port binding for Web Services.
 
-## 🛠 Setup
-1. Add `API_ID`, `API_HASH`, and `BOT_TOKEN` to Environment Variables.
-2. Deploy as a **Web Service** using **Docker** environment.
+## 🛠 Commands
+| Command | Description |
+| :--- | :--- |
+| `/start` | Open the stylish Flixora menu |
+| `/id` | Find IDs (Reply to any message for more details) |
+| `/system` | View Server Uptime, CPU, and RAM usage |
+| `/help` | Get support links |
+
+## ⚙️ Environment Variables
+Add these to your host (Render/Heroku):
+- `API_ID`: Your Telegram API ID.
+- `API_HASH`: Your Telegram API Hash.
+- `BOT_TOKEN`: Your Bot Token from @BotFather.
+- `PORT`: (Optional) Default is 10000 for Render.
+
+## 📦 Deployment
+1. Connect your GitHub Repo to **Render**.
+2. Select **Docker** environment.
+3. Add the variables and click **Deploy**.
+
+**Powered by Flixora Ecosystem**
