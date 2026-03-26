@@ -49,13 +49,13 @@ async def start(client, message):
 ┠ 👁 Preview -> `/getsticker`
 ┗ 🖥 System Info -> `/system`
 
-━ Powered by @FlixoraUpdates 
+━ Powered by @Amarhacker
 
 👇 𝗡𝗘𝗖𝗛𝗘 𝗕𝗨𝗧𝗧𝗢𝗡 𝗣𝗥𝗘𝗦𝗦 𝗞𝗔𝗥𝗢 𝗔𝗨𝗥 𝗕𝗢𝗧 𝗣𝗔𝗔𝗢 ! 👇"""
     
     btns = InlineKeyboardMarkup([
         [InlineKeyboardButton("➕ Add Flixora to Group", url=f"https://t.me/{client.me.username}?startgroup=true")],
-        [InlineKeyboardButton("📢 Updates", url="https://t.me/FlixoraUpdates"), InlineKeyboardButton("🛠 Support", url="https://t.me/FlixoraSupport")]
+        [InlineKeyboardButton("📢 Updates", url="https://t.me/flixoraoffiacial"), InlineKeyboardButton("🛠 Support", url="https://t.me/FlixoraSupport")]
     ])
     await message.reply_text(welcome_text, reply_markup=btns)
 
