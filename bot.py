@@ -12,20 +12,29 @@ from aiohttp import web
 API_ID = int(os.environ.get("API_ID", 0))
 API_HASH = os.environ.get("API_HASH", "")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
-PORT = os.environ.get("PORT", "10000")
+
+# Render Port Fix
+PORT_STR = os.environ.get("PORT", "10000")
+if PORT_STR.isdigit():
+    PORT = int(PORT_STR)
+else:
+    PORT = 10000
 
 app = Client("FlixoraIDBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 boot_time = time.time()
 
-# --- WEB SERVER ---
+# --- WEB SERVER (For Render) ---
 async def handle(request):
-    return web.Response(text="Flixora ID Bot is Online!")
+    return web.Response(text="Flixora ID Bot is Online and Healthy!")
 
 async def start_web_server():
     server = web.Application()
     server.add_routes([web.get('/', handle)])
-    runner = web.AppRunner(server); await runner.setup()
-    await web.TCPSite(runner, "0.0.0.0", int(PORT)).start()
+    runner = web.AppRunner(server)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", PORT)
+    await site.start()
+    print(f"Web Server started on port {PORT}")
 
 # --- START COMMAND ---
 @app.on_message(filters.command("start") & filters.private)
@@ -52,7 +61,7 @@ async def start(client, message):
     ])
     await message.reply_text(welcome_text, reply_markup=btns)
 
-# --- ID COMMAND (User, Group, Channel, Unique) ---
+# --- ID COMMAND ---
 @app.on_message(filters.command("id"))
 async def id_finder(client, message):
     text = f"🔷 **𝗙𝗟𝗜𝗫𝗢𝗥𝗔 𝗜𝗗 𝗗𝗘𝗧𝗔𝗜𝗟𝗦** 🔶\n━━━━━━━━━━━━━━━━━\n"
@@ -68,17 +77,14 @@ async def id_finder(client, message):
             text += f"🎯 **Replied User ID:** `{reply.from_user.id}`\n"
             text += f"⭐ **Replied Premium:** `{'✅ Yes' if reply.from_user.is_premium else '❌ No'}`\n"
         
-        # Unique ID for Media
         if reply.sticker:
-            text += f"🆔 **Unique ID:** `{reply.sticker.file_unique_id}`\n"
+            text += f"🆔 **Sticker Unique ID:** `{reply.sticker.file_unique_id}`\n"
         elif reply.document:
             text += f"🆔 **File Unique ID:** `{reply.document.file_unique_id}`\n"
-        elif reply.video:
-            text += f"🆔 **Video Unique ID:** `{reply.video.file_unique_id}`\n"
             
     await message.reply_text(text, quote=True)
 
-# --- STICKER ID COMMAND (Must Reply to Sticker) ---
+# --- STICKER ID COMMAND ---
 @app.on_message(filters.command(["stickerid", "stid"]))
 async def sticker_id_getter(client, message):
     if message.reply_to_message and message.reply_to_message.sticker:
@@ -94,7 +100,7 @@ async def sticker_id_getter(client, message):
     else:
         await message.reply_text("⚠️ **Hero, kisi sticker ko reply karke `/stickerid` likho!**", quote=True)
 
-# --- SYSTEM COMMAND (Server Stats) ---
+# --- SYSTEM COMMAND ---
 @app.on_message(filters.command("system"))
 async def system_stats(client, message):
     uptime = str(datetime.now() - datetime.fromtimestamp(boot_time)).split('.')[0]
@@ -108,16 +114,6 @@ async def system_stats(client, message):
 💾 **RAM Usage:** `{ram}%`
 📡 **Status:** `Running Smooth 🚀`"""
     await message.reply_text(sys_text, quote=True)
-
-# --- STICKER PREVIEW (Optional: If someone pastes CAAC ID) ---
-@app.on_message(filters.text & filters.private)
-async def preview_logic(client, message):
-    if message.text.startswith("CAAC"):
-        try:
-            await message.reply_sticker(sticker=message.text)
-            await message.reply_text("✨ **Sticker Preview Generated!**")
-        except:
-            pass
 
 # --- STARTUP ---
 async def main():
@@ -133,4 +129,5 @@ async def main():
     await idle()
 
 if __name__ == "__main__":
-    app.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
