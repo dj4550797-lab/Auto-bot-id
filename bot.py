@@ -15,17 +15,14 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 
 # Render Port Fix
 PORT_STR = os.environ.get("PORT", "10000")
-if PORT_STR.isdigit():
-    PORT = int(PORT_STR)
-else:
-    PORT = 10000
+PORT = int(PORT_STR) if PORT_STR.isdigit() else 10000
 
 app = Client("FlixoraIDBot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 boot_time = time.time()
 
 # --- WEB SERVER (For Render) ---
 async def handle(request):
-    return web.Response(text="Flixora ID Bot is Online and Healthy!")
+    return web.Response(text="Flixora Pro Ecosystem is Live!")
 
 async def start_web_server():
     server = web.Application()
@@ -49,6 +46,7 @@ async def start(client, message):
 ┠ 👥 Group ID -> `/id`
 ┠ 👤 User ID -> `/id`
 ┠ 🎟 Sticker ID -> `/stickerid`
+┠ 👁 Preview -> `/getsticker`
 ┗ 🖥 System Info -> `/system`
 
 ━ Powered by @FlixoraUpdates 
@@ -77,6 +75,7 @@ async def id_finder(client, message):
             text += f"🎯 **Replied User ID:** `{reply.from_user.id}`\n"
             text += f"⭐ **Replied Premium:** `{'✅ Yes' if reply.from_user.is_premium else '❌ No'}`\n"
         
+        # Unique ID Extractors
         if reply.sticker:
             text += f"🆔 **Sticker Unique ID:** `{reply.sticker.file_unique_id}`\n"
         elif reply.document:
@@ -84,7 +83,20 @@ async def id_finder(client, message):
             
     await message.reply_text(text, quote=True)
 
-# --- STICKER ID COMMAND ---
+# --- GET STICKER COMMAND (ID to Sticker) ---
+@app.on_message(filters.command("getsticker"))
+async def get_sticker_preview(client, message):
+    if len(message.command) < 2:
+        return await message.reply_text("⚠️ **Usage:** `/getsticker [Sticker_File_ID]`")
+    
+    sticker_id = message.command[1]
+    try:
+        await message.reply_sticker(sticker=sticker_id)
+        await message.reply_text("✨ **Above is your Sticker Preview!**")
+    except Exception as e:
+        await message.reply_text(f"❌ **Invalid ID or Error:** `{e}`")
+
+# --- STICKER ID COMMAND (Sticker to ID) ---
 @app.on_message(filters.command(["stickerid", "stid"]))
 async def sticker_id_getter(client, message):
     if message.reply_to_message and message.reply_to_message.sticker:
@@ -120,10 +132,11 @@ async def main():
     await start_web_server()
     await app.start()
     await app.set_bot_commands([
-        BotCommand("start", "Main Menu"),
-        BotCommand("id", "Get Chat/User IDs"),
-        BotCommand("stickerid", "Get Sticker Details"),
-        BotCommand("system", "Bot Server Status")
+        BotCommand("start", "Open Main Menu"),
+        BotCommand("id", "Get ID & Premium Status"),
+        BotCommand("stickerid", "Get ID from Sticker"),
+        BotCommand("getsticker", "Get Sticker from ID"),
+        BotCommand("system", "Check Server Stats")
     ])
     print("Flixora Pro ID Bot is Ready!")
     await idle()
