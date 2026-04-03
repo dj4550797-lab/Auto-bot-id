@@ -7,14 +7,14 @@ from flask import Flask
 from threading import Thread
 
 # Setup Logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 # --- WEB SERVER ---
 app = Flask(__name__)
 @app.route('/')
 def index():
-    return "<h1>Flixora Bot is Running!</h1>"
+    return "Bot is Running"
 
 def run_web():
     port = int(os.environ.get("PORT", 10000))
@@ -22,19 +22,22 @@ def run_web():
 
 # --- THE BOT ---
 async def start_bot():
-    # Get the absolute path to the plugins folder
-    plugins_path = os.path.join(os.path.dirname(__file__), "plugins")
+    # Force Pyrogram to see the plugins folder
+    plugins_dir = os.path.join(os.path.dirname(__file__), "plugins")
     
-    logger.info(f"Checking for plugins in: {plugins_path}")
-    if not os.path.exists(plugins_path):
-        logger.error("CRITICAL: 'plugins' folder not found!")
+    # DEBUG: Show us what files are in the plugins folder
+    if os.path.exists(plugins_dir):
+        files = os.listdir(plugins_dir)
+        logger.info(f"Found plugins folder. Files inside: {files}")
+    else:
+        logger.error("plugins folder NOT FOUND in current directory!")
 
     bot = Client(
         name="FlixoraIDBot",
         api_id=API_ID,
         api_hash=API_HASH,
         bot_token=BOT_TOKEN,
-        plugins=dict(root="plugins") # This looks in the 'plugins' folder
+        plugins=dict(root="plugins") 
     )
 
     try:
@@ -42,11 +45,12 @@ async def start_bot():
         me = await bot.get_me()
         logger.info(f"DONE! Bot started as @{me.username}")
 
+        # Send Startup Message
         if LOG_CHANNEL:
             try:
-                await bot.send_message(LOG_CHANNEL, "✅ **Bot is now Online and Plugins are loaded!**")
+                await bot.send_message(LOG_CHANNEL, "✅ **Bot is Online! Commands are now working.**")
             except Exception as e:
-                logger.error(f"LOG_CHANNEL ERROR: {e}. Check if bot is ADMIN in {LOG_CHANNEL}")
+                logger.error(f"LOG_CHANNEL ERROR: {e}")
 
         await idle()
         
