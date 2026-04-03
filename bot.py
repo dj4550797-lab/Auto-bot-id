@@ -1,19 +1,22 @@
 import os
 import asyncio
+import logging
 from pyrogram import Client
 from info import API_ID, API_HASH, BOT_TOKEN, LOG_CHANNEL
 from threading import Thread
 from flask import Flask
 
-# --- TINY WEB SERVER FOR RENDER ---
-app = Flask(__name__)
+# --- LOGGING ---
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("FlixoraBot")
 
+# --- WEB SERVER ---
+app = Flask(__name__)
 @app.route('/')
 def health_check():
-    return "Bot is Live and Running!"
+    return "Bot is Live!"
 
 def run_flask():
-    # Render uses port 10000 by default
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
 
@@ -26,28 +29,37 @@ class FlixoraBot(Client):
             api_hash=API_HASH,
             bot_token=BOT_TOKEN,
             plugins=dict(root="plugins"),
+            workers=100
         )
 
     async def start(self):
+        logger.info("Connecting to Telegram...")
         await super().start()
         me = await self.get_me()
-        print(f"[{me.first_name}] is now Online!")
+        logger.info(f"DONE! Bot started as @{me.username}")
+        
         if LOG_CHANNEL:
-            try: await self.send_message(LOG_CHANNEL, f"✅ **Bot Started!**")
-            except: pass
+            try:
+                await self.send_message(LOG_CHANNEL, "✅ **Bot is now Online!**")
+                logger.info("Sent startup message to Log Channel.")
+            except Exception as e:
+                logger.error(f"Failed to send to Log Channel: {e}")
 
     async def stop(self, *args):
+        logger.info("Stopping Bot...")
         await super().stop()
-        print("Bot Stopped.")
 
-# --- MAIN EXECUTION ---
+# --- MAIN RUNNER ---
 if __name__ == "__main__":
-    # 1. Start the Web Server in the background (Thread)
-    # This stops the "No ports detected" error on Render
-    t = Thread(target=run_flask)
-    t.daemon = True
-    t.start()
+    # Start Web Server
+    logger.info("Starting Flask Web Server...")
+    Thread(target=run_flask, daemon=True).start()
     
-    # 2. Run the Telegram Bot
+    # Run Bot
+    logger.info("Initializing Bot...")
     bot = FlixoraBot()
-    bot.run()
+    
+    try:
+        bot.run()
+    except Exception as e:
+        logger.critical(f"BOT CRASHED: {e}")

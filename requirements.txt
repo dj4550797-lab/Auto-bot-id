@@ -3,5 +3,5 @@ tgcrypto
 motor
 python-dotenv
 psutil
-Flask
+flask
 gunicorn
