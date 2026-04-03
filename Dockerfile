@@ -1,7 +1,8 @@
-# Use official Python image
-FROM python:3.10-slim-buster
+# Use a MODERN Python image based on Debian Bookworm
+FROM python:3.10-slim-bookworm
 
 # Update system and install required dependencies for psutil
+# No changes needed here, this command is now fixed by the line above
 RUN apt-get update && apt-get install -y gcc python3-dev
 
 # Set the working directory
