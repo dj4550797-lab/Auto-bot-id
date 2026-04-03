@@ -1,33 +1,65 @@
-# 🔷 Flixora ID & System Finder 🔶
+# 🆔 Flixora ID Bot
 
-The most stylish and powerful Telegram ID Finder bot with real-time server monitoring and unique ID detection.
+A simple, fast, and lightweight Telegram bot built with [Pyrogram](https://docs.pyrogram.org/) to quickly get Telegram IDs. 
 
-## 🚀 Features
-- ⚡ **Instant IDs:** Get User, Group, Channel, and Bot IDs.
-- ⭐ **Premium Detection:** Check if a user is a Telegram Premium subscriber.
-- 🆔 **Unique IDs:** Extracts the hidden `file_unique_id` from stickers and files.
-- 🖥️ **System Monitor:** Use `/system` to see real-time CPU, RAM, and Server health.
-- 🎟️ **Sticker Tools:** Get Sticker IDs or preview any Sticker ID instantly.
-- 🐳 **Docker & Render Ready:** Includes automated port binding for Web Services.
+Whether you need a User ID, a Group/Channel ID, or the exact `file_id` of a Sticker (useful for bot development), this bot has you covered!
 
-## 🛠 Commands
+---
+
+## 🌟 Features
+
+- 👤 **User IDs:** Get your own ID or reply to a user to get theirs.
+- 👥 **Group IDs:** Get the ID of the current group.
+- 📢 **Channel IDs:** Reply to a forwarded message from a channel to get the Channel ID (e.g., `-100123456789`).
+- 🎟️ **Sticker IDs:** Reply to any sticker to get its exact `file_id` and `file_unique_id`.
+- 📱 **Menu Button:** Automatically generates a built-in Telegram Menu Button for easy access to commands.
+- 🐳 **Docker Ready:** Fully configured to be deployed on Render, Heroku, or any VPS using Docker.
+
+---
+
+## 🛠️ Commands
+
 | Command | Description |
 | :--- | :--- |
-| `/start` | Open the stylish Flixora menu |
-| `/id` | Find IDs (Reply to any message for more details) |
-| `/system` | View Server Uptime, CPU, and RAM usage |
-| `/help` | Get support links |
+| `/start` | Starts the bot and displays the help menu. |
+| `/id` | Gets the ID of the current chat, your User ID, or the replied user/channel. |
+| `/stickerid` | (Reply to a sticker) Gets the `file_id` and `file_unique_id` of the sticker. |
+| `/help` | Shows instructions on how to use the bot. |
 
-## ⚙️ Environment Variables
-Add these to your host (Render/Heroku):
-- `API_ID`: Your Telegram API ID.
-- `API_HASH`: Your Telegram API Hash.
-- `BOT_TOKEN`: Your Bot Token from @BotFather.
-- `PORT`: (Optional) Default is 10000 for Render.
+---
 
-## 📦 Deployment
-1. Connect your GitHub Repo to **Render**.
-2. Select **Docker** environment.
-3. Add the variables and click **Deploy**.
+## 🚀 Deployment (Render)
 
-**Powered by Flixora Ecosystem**
+This bot is optimized for deployment on [Render.com](https://render.com/) using Docker.
+
+### 1. Prerequisites
+Before deploying, make sure you have:
+1. An `API_ID` and `API_HASH` from [my.telegram.org](https://my.telegram.org).
+2. A `BOT_TOKEN` from [@BotFather](https://t.me/BotFather) on Telegram.
+3. A GitHub account.
+
+### 2. Steps to Deploy
+1. **Fork or Clone** this repository to your own GitHub account.
+2. Go to the [Render Dashboard](https://dashboard.render.com/) and click **New +** -> **Background Worker**.
+3. Connect your GitHub account and select this repository.
+4. Set the **Environment** to **Docker**.
+5. Scroll down to **Environment Variables** and add the following:
+
+   | Key | Value |
+   | :--- | :--- |
+   | `API_ID` | Your API ID |
+   | `API_HASH` | Your API Hash |
+   | `BOT_TOKEN` | Your Bot Token |
+
+6. Click **Create Background Worker**. Render will build the Docker container and start your bot automatically!
+
+---
+
+## 💻 Local Installation
+
+If you want to run the bot locally on your computer or VPS instead of Render:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/YourUsername/YourRepoName.git
+   cd YourRepoName
