@@ -1,19 +1,22 @@
-# Use a MODERN Python image based on Debian Bookworm
+# 1. Use a modern Python base
 FROM python:3.10-slim-bookworm
 
-# Update system and install required dependencies for psutil
-# No changes needed here, this command is now fixed by the line above
+# 2. Install system dependencies
 RUN apt-get update && apt-get install -y gcc python3-dev
 
-# Set the working directory
+# 3. Set working directory to /app
 WORKDIR /app
 
-# Copy the requirements file and install dependencies
-COPY requirements.txt requirements.txt
-RUN pip3 install -U -r requirements.txt
+# 4. Copy requirements first for faster building
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Copy all the bot files to the container
+# 5. Copy EVERY file from your folder into the container
+# This fixes the "no root" or "file not found" error
 COPY . .
 
-# Run the bot
+# 6. Expose the port for Render Web Service
+EXPOSE 10000
+
+# 7. Start the bot (which now includes the web server)
 CMD ["python3", "bot.py"]
