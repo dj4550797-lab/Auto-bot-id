@@ -1,6 +1,59 @@
 class Script(object):
-    START_TXT = """👋 **Hello {first_name}!**\n\nI am an **Advanced Group Management & ID Bot** 🤖.\nI have Features like Locks, Warns, Notes, Filters, and Advanced Moderation.\n\nHit **Help** to see what I can do!"""
-    HELP_TXT = """🛠 **Commands:**\n\n**👤 User:**\n`/id` - Get IDs & Premium Status\n`/stickerid` - Get Sticker ID\n`/alive` - Bot Stats\n`/rules` - Group Rules\n`#note` - Get Note\n\n**👑 Admin:**\n`/kick`, `/mute`, `/unmute`, `/ban`, `/purge`\n`/tban`, `/tmute` - Temp Punishments\n`/promote`, `/demote`\n`/warn`, `/unwarn`\n`/setwelcome`\n`/filter`, `/stop`\n`/save`, `/get` - Notes\n`/setrules`\n`/lock`, `/unlock` (url, forward, sticker, photo, video)"""
-    ABOUT_TXT = """🤖 **About Me:**\n📝 **Language:** Python 3\n📚 **Library:** Pyrogram\n🗄 **Database:** MongoDB\n🛡 **Features:** Rose Clone Features"""
-    ALIVE_TXT = """🟢 **System is Live!**\n\n**💻 Stats:**\n ├ **CPU:** `{cpu}%`\n ├ **RAM:** `{ram}%`\n └ **Uptime:** `{uptime}`"""
-    BANNED_TXT = """🚫 **Access Denied!**\nYou are globally banned from using this bot."""
+    START_TXT = """
+┏━━📦 **FLIXORA ADVANCED**
+┃
+┣👤 **Hello** {first_name}
+┣🤖 **Status:** `Active & Shielded` 🛡️
+┃
+┣📜 **Brief:** I am a high-speed
+┃ Management Bot with Global Ban
+┃ & Advanced Security features.
+┃
+┣⚡ **Powered by:** `Pyrogram`
+┗━━━━━━━━━━━━━━━━━━━━━━━┛
+"""
+
+    HELP_TXT = """
+┏━━🛠️ **CONTROL PANEL**
+┃
+┣📜 **Admin Tools:**
+┃ `/ban`, `/mute`, `/kick`, `/purge`
+┃ `/promote`, `/pin`, `/setlog`
+┃
+┣🛡️ **Security:**
+┃ `/antiflood` (limit), `/captcha` (on/off)
+┃ `/cleanservice` (on/off), `/lock`
+┃
+┣🌐 **Federation:**
+┃ `/newfed`, `/joinfed`, `/fban`
+┃
+┣📂 **Extras:**
+┃ `/id`, `/stickerid`, `/save`, `/filter`
+┗━━━━━━━━━━━━━━━━━━━━━━━┛
+"""
+
+    ALIVE_TXT = """
+┏━━⚡ **SYSTEM STATUS**
+┃
+┣🔋 **CPU:** `{cpu}%`
+┣📟 **RAM:** `{ram}%`
+┣⏱️ **UPTIME:** `{uptime}`
+┣🛰️ **PING:** `{ping}ms`
+┗━━━━━━━━━━━━━━━━━━━━━━━┛
+"""
+
+    BAN_TXT = """
+┏━🛡️ **ACTION: BAN**
+┣👤 **User:** {user}
+┣🆔 **ID:** `{user_id}`
+┣🔨 **Status:** `Globally Hammered`
+┗━━━━━━━⚔️━━━━━━━┛
+"""
+
+    MUTE_TXT = """
+┏━🔇 **ACTION: MUTE**
+┣👤 **User:** {user}
+┣⏳ **Duration:** `{duration}`
+┣📜 **Reason:** `Restricted access`
+┗━━━━━━━📵━━━━━━━┛
+"""
