@@ -1,59 +1,42 @@
 class Script(object):
     START_TXT = """
-┏━━📦 **FLIXORA ADVANCED**
+┏━━📦 **FLIXORA ID BOT**
 ┃
 ┣👤 **Hello** {first_name}
-┣🤖 **Status:** `Active & Shielded` 🛡️
+┣🤖 **Status:** `Operational` 🟢
 ┃
-┣📜 **Brief:** I am a high-speed
-┃ Management Bot with Global Ban
-┃ & Advanced Security features.
+┣📜 **I am a specialized ID Tool.**
+┃ I can fetch User, Group, Channel,
+┃ and Sticker IDs instantly.
 ┃
-┣⚡ **Powered by:** `Pyrogram`
+┣⚡ **Library:** `Pyrogram`
 ┗━━━━━━━━━━━━━━━━━━━━━━━┛
 """
 
     HELP_TXT = """
-┏━━🛠️ **CONTROL PANEL**
+┏━━🛠️ **COMMAND MENU**
 ┃
-┣📜 **Admin Tools:**
-┃ `/ban`, `/mute`, `/kick`, `/purge`
-┃ `/promote`, `/pin`, `/setlog`
+┣🔹 `/id` - Get Chat & User ID
+┃ (Reply to someone for their ID)
 ┃
-┣🛡️ **Security:**
-┃ `/antiflood` (limit), `/captcha` (on/off)
-┃ `/cleanservice` (on/off), `/lock`
+┣🔹 `/stickerid` - Get Sticker info
+┃ (Reply to any sticker)
 ┃
-┣🌐 **Federation:**
-┃ `/newfed`, `/joinfed`, `/fban`
+┣🔹 `/info` - Advanced User info
 ┃
-┣📂 **Extras:**
-┃ `/id`, `/stickerid`, `/save`, `/filter`
+┣📡 **Channels:** Reply to a 
+┃ forwarded msg to get Channel ID.
 ┗━━━━━━━━━━━━━━━━━━━━━━━┛
 """
 
-    ALIVE_TXT = """
-┏━━⚡ **SYSTEM STATUS**
+    ID_TXT = """
+┏━━🆔 **IDENTITY INFO**
 ┃
-┣🔋 **CPU:** `{cpu}%`
-┣📟 **RAM:** `{ram}%`
-┣⏱️ **UPTIME:** `{uptime}`
-┣🛰️ **PING:** `{ping}ms`
+┣🔹 **Chat ID:** `{chat_id}`
+┣👤 **User ID:** `{user_id}`
+┃
+┣🎯 **Replied:** `{replied_id}`
+┣📢 **Forward:** `{forward_id}`
+┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━┛
-"""
-
-    BAN_TXT = """
-┏━🛡️ **ACTION: BAN**
-┣👤 **User:** {user}
-┣🆔 **ID:** `{user_id}`
-┣🔨 **Status:** `Globally Hammered`
-┗━━━━━━━⚔️━━━━━━━┛
-"""
-
-    MUTE_TXT = """
-┏━🔇 **ACTION: MUTE**
-┣👤 **User:** {user}
-┣⏳ **Duration:** `{duration}`
-┣📜 **Reason:** `Restricted access`
-┗━━━━━━━📵━━━━━━━┛
 """
