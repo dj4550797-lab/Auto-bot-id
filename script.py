@@ -1,42 +1,40 @@
 class Script(object):
     START_TXT = """
-┏━━📦 **FLIXORA ID BOT**
+┏━━📦 **FLIXORA ID HUB**
 ┃
 ┣👤 **Hello** {first_name}
-┣🤖 **Status:** `Operational` 🟢
+┣🤖 **Status:** `Active` 🟢
 ┃
-┣📜 **I am a specialized ID Tool.**
-┃ I can fetch User, Group, Channel,
-┃ and Sticker IDs instantly.
+┣📜 **Instructions:**
+┃ ID dhoondhne ke liye `/how` type karein.
+┃ Specific ID ke liye message ko reply karein.
 ┃
-┣⚡ **Library:** `Pyrogram`
 ┗━━━━━━━━━━━━━━━━━━━━━━━┛
 """
 
-    HELP_TXT = """
-┏━━🛠️ **COMMAND MENU**
+    HOW_TO_TXT = """
+┏━━❓ **HOW TO FIND IDs?**
 ┃
-┣🔹 `/id` - Get Chat & User ID
-┃ (Reply to someone for their ID)
+┣👤 **User ID:**
+┃ Kisi bhi user ke message ko
+┃ reply karke `/id` likhein.
 ┃
-┣🔹 `/stickerid` - Get Sticker info
-┃ (Reply to any sticker)
+┣📢 **Channel ID:**
+┃ Channel ka message bot ko
+┃ **Forward** karein aur uspar
+┃ `/id` likh kar reply karein.
 ┃
-┣🔹 `/info` - Advanced User info
+┣👥 **Group ID:**
+┃ Group mein bas `/id` likhein.
 ┃
-┣📡 **Channels:** Reply to a 
-┃ forwarded msg to get Channel ID.
+┣🎫 **Sticker ID:**
+┃ Sticker par reply karke `/stid` likhein.
+┃
+┣🔄 **Sticker from ID:**
+┃ `/getsticker [file_id]` type karein.
 ┗━━━━━━━━━━━━━━━━━━━━━━━┛
 """
 
-    ID_TXT = """
-┏━━🆔 **IDENTITY INFO**
-┃
-┣🔹 **Chat ID:** `{chat_id}`
-┣👤 **User ID:** `{user_id}`
-┃
-┣🎯 **Replied:** `{replied_id}`
-┣📢 **Forward:** `{forward_id}`
-┃
-┗━━━━━━━━━━━━━━━━━━━━━━━┛
-"""
+    GUIDE_BTN = [
+        ["❓ ID Kaise Dhundhein?", "how_to_use"]
+    ]
