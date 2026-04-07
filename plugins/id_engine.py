@@ -1,61 +1,63 @@
 from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from script import Script
 
 @Client.on_message(filters.command("start"))
 async def start_handler(client, message):
+    btn = InlineKeyboardMarkup([[
+        InlineKeyboardButton("❓ ID Kaise Dhundhein?", callback_data="how_to")
+    ]])
     await message.reply_text(
-        Script.START_TXT.format(first_name=message.from_user.first_name)
+        Script.START_TXT.format(first_name=message.from_user.first_name),
+        reply_markup=btn
     )
+
+@Client.on_message(filters.command("how"))
+async def how_handler(client, message):
+    await message.reply_text(Script.HOW_TO_TXT)
+
+@Client.on_callback_query(filters.regex("how_to"))
+async def cb_how(client, query):
+    await query.message.edit_text(Script.HOW_TO_TXT)
 
 @Client.on_message(filters.command("id"))
-async def id_handler(client, message):
-    chat_id = message.chat.id
-    user_id = message.from_user.id if message.from_user else "N/A"
+async def smart_id(client, message):
+    # Case 1: Reply to a Forward (Channel ID)
+    if message.reply_to_message and message.reply_to_message.forward_from_chat:
+        target = message.reply_to_message.forward_from_chat
+        text = f"┏━━📢 **CHANNEL ID**\n┣🔹 **Name:** `{target.title}`\n┣🆔 **ID:** `{target.id}`\n┗━━━━━━━━━━━━━┛"
     
-    # Logic for replies and forwards
-    replied_id = "──"
-    forward_id = "──"
+    # Case 2: Reply to a User Message (User ID)
+    elif message.reply_to_message:
+        user = message.reply_to_message.from_user
+        if not user:
+            return await message.reply_text("⚠️ User ki details nahi mil saki (Privacy Settings).")
+        text = f"┏━━👤 **USER ID**\n┣🔹 **Name:** {user.mention}\n┣🆔 **ID:** `{user.id}`\n┗━━━━━━━━━━━━━┛"
     
-    if message.reply_to_message:
-        replied = message.reply_to_message
-        if replied.from_user:
-            replied_id = f"`{replied.from_user.id}`"
-        
-        if replied.forward_from_chat: # For Channel IDs
-            forward_id = f"`{replied.forward_from_chat.id}`"
-        elif replied.forward_from: # For User Forwards
-            forward_id = f"`{replied.forward_from.id}`"
-
-    text = (
-        f"┏━━🆔 **IDENTITY HUB**\n"
-        f"┃\n"
-        f"┣🔹 **Chat ID:** `{chat_id}`\n"
-        f"┣👤 **User ID:** `{user_id}`\n"
-        f"┃\n"
-        f"┣🎯 **Replied User:** {replied_id}\n"
-        f"┣📢 **Forwarded From:** {forward_id}\n"
-        f"┃\n"
-        f"┗━━━━━━━✨━━━━━━━┛"
-    )
+    # Case 3: Normal command (Chat/Group ID)
+    else:
+        text = f"┏━━👥 **CHAT ID**\n┣🔹 **Title:** `{message.chat.title or 'Private'}`\n┣🆔 **ID:** `{message.chat.id}`\n┗━━━━━━━━━━━━━┛"
+    
     await message.reply_text(text, quote=True)
 
 @Client.on_message(filters.command(["stickerid", "stid"]))
-async def sticker_id_handler(client, message):
+async def get_stid(client, message):
     if not message.reply_to_message or not message.reply_to_message.sticker:
-        return await message.reply_text("⚠️ **Please reply to a sticker!**")
+        return await message.reply_text("⚠️ Sticker par reply karke `/stid` likhein!")
     
     s = message.reply_to_message.sticker
-    text = (
-        f"┏━━🎫 **STICKER METADATA**\n"
-        f"┃\n"
-        f"┣🔹 **File ID:**\n┃ `{s.file_id}`\n"
-        f"┣🔹 **Unique ID:** `{s.file_unique_id}`\n"
-        f"┣🔹 **Emoji:** {s.emoji}\n"
-        f"┃\n"
-        f"┗━━━━━━━━━━━━━━━┛"
+    await message.reply_text(
+        f"┏━━🎫 **STICKER ID**\n┣🆔 `{s.file_id}`\n┗━━━━━━━━━━━━━┛",
+        quote=True
     )
-    await message.reply_text(text, quote=True)
 
-@Client.on_message(filters.command("help"))
-async def help_handler(client, message):
-    await message.reply_text(Script.HELP_TXT)
+@Client.on_message(filters.command("getsticker"))
+async def id_to_sticker(client, message):
+    if len(message.command) < 2:
+        return await message.reply_text("❌ **Usage:** `/getsticker [file_id]`")
+    
+    file_id = message.command[1]
+    try:
+        await message.reply_sticker(file_id)
+    except Exception as e:
+        await message.reply_text(f"❌ **Invalid ID ya Error:** `{e}`")
